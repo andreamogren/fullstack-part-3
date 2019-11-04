@@ -2,10 +2,6 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
-
-app.use(bodyParser.json())
-app.use(cors())
-
 const requestLogger = (request, response, next) => {
     console.log('Method: ', request.method) 
     console.log('Path: ', request.path)
@@ -14,6 +10,9 @@ const requestLogger = (request, response, next) => {
     next()
 }
 
+app.use(bodyParser.json())
+app.use(cors())
+app.use(express.static('build'))
 app.use(requestLogger)
 
 let notes = [
