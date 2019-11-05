@@ -95,6 +95,6 @@ app.get('/api/info', (request, response) => {
                 `)
 })
 
-const port = 3001
+const port = 3001 || process.env.PORT
 app.listen(port)
 console.log(`Server running on port ${port}`)
