@@ -21,35 +21,31 @@ const personSchema = new mongoose.Schema({
 const Person = mongoose.model('Person', personSchema)
 const persons = []
 
-Person.find({}).then(result => {
-  console.log(result)
-/*   result.forEach(person => {
-    console.log("person: ", person)
-    persons.concat(person)
-    console.log("persons inside forEach: ", persons)
-  }) */
-})
-
 console.log("persons outside forEach/find: ", persons)
 
 const generateId = () => {
-  const maxId = persons.length > 0
-    ? Math.max(...persons.map(n => n.id))
-    : 0
-    return maxId + 1
+  Person.find({}).then(result => {
+    console.log("RESULT: ", result)
+    result.forEach(person => {
+      console.log("person: ", person)
+      persons.push(person)
+      console.log("persons inside forEach: ", persons)
+    })
+    console.log(persons.length > 0)
+  })
+  maxId = persons.length > 0
+  ? Math.max(...persons.map(n => n.id))
+  : 0 
+  return maxId 
 }
 
-console.log("generateId: ", generateId())
-
-mongoose.connection.close()
-
-/*const person = new Person({
+const person = new Person({
   name: process.argv[3],
   number: process.argv[4],
-  id: 1
+  id: generateId()
 })
 
 person.save().then(response => {
-  console.log('note saved!')
+  console.log('person saved!')
   mongoose.connection.close()
-})*/
+})
