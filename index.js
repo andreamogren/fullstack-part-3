@@ -30,9 +30,9 @@ let persons = [
 ]
 
 app.use(cors())
+app.use(express.static('build'))
 app.use(bodyParser.json())
 app.use(morgan('tiny'))
-app.use(express.static('build'))
 
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(people => {
