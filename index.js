@@ -9,7 +9,9 @@ const errorHandler = (error, request, response, next) => {
     console.error(error.message)
 
     if (error.name === 'CastError' && error.kind === 'ObjectId') {
-        return response.status(400).send({ error: 'malformatted id' })
+        return response.status(400).send({error: 'malformatted id'})
+    } else if (error.name === 'ValidationError' && error.errors.name.kind === 'unique') {
+        return response.status(400).send({error: 'name must be unique'})
     }
 
     next(error)
@@ -74,7 +76,7 @@ const generateId = () => {
     return maxId + 1
 }
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
     
     if (!body.name || !body.number) {
@@ -83,22 +85,25 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const addedName = body.name
+    /* const addedName = body.name
     const nameExists = persons.find(person =>  person.name === addedName)
     if (nameExists) {
         return response.status(400).json({
             error: 'name must be unique'
         })
-    }
+    } */
 
     const person = new Person({
         name: body.name,
         number: body.number,
     })
     
-    person.save().then(savedPerson => {
-        response.json(savedPerson.toJSON())
-    })
+    person
+        .save()
+        .then(savedPerson => {
+            response.json(savedPerson.toJSON())
+        })
+        .catch(error => next(error))
 })
 
 app.get('/api/info', (request, response) => {
